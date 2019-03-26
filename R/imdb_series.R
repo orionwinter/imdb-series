@@ -17,7 +17,7 @@ get_episode_ratings = function(url){
         return()
 }
 
-get_all_episodes = function(series_imdb_id) {
+get_all_episodes = function(series_imdb_id, series_name) {
   require("dplyr")
   require("tidyr")
   require("rvest")
@@ -35,7 +35,7 @@ get_all_episodes = function(series_imdb_id) {
   # Get episodes for each season
   episodes = tibble()
   for (season in seasons) {
-    season_base_page = paste0("https://www.imdb.com/title/tt0096697/episodes?season=", season) %>% 
+    season_base_page = paste0("https://www.imdb.com/title/", series_imdb_id, "/episodes?season=", season) %>% 
       read_html()
     
     season_number = season_base_page %>% 
@@ -83,14 +83,6 @@ get_all_episodes = function(series_imdb_id) {
     } else {
       episode_votes = gsub("\\(|\\)|,", "", episode_votes)
     }
-    
-    series_name = season_base_page %>% 
-      html_node("#main") %>% 
-      html_node(".subpage_title_block") %>% 
-      html_node(".parent") %>% 
-      html_node("h3") %>% 
-      html_node("a") %>% 
-      html_text()
     
     season_episodes = season_base_page %>% 
       html_node("#episodes_content > .clear > .eplist") %>% 

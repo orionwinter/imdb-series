@@ -12,7 +12,7 @@ for(i in seq(1, NROW(series_to_fetch), by = 4)){
             slice(i:min(i + 4, NROW(series_to_fetch))) %>% 
             group_by(series_name) %>% 
             do(tryCatch({flog.info(paste("Getting", .$series_name, .$imdb_id));
-                get_all_episodes(.$imdb_id)}, 
+                get_all_episodes(.$imdb_id, .$series_name)}, 
                 error = function(e) data.frame(NA)))
         series_data %>%
             write_csv(output_file)

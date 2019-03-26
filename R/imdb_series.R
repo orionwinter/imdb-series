@@ -24,20 +24,18 @@ get_all_episodes = function(series_imdb_id) {
   require("purrr")
   
   # Get existing seasons
-  title_url = paste0("http://www.imdb.com/title/", series_imdb_id, "/?ref_=ttep_ql_4")
-  base_page = read_html(title_url) 
+  seasons_url = paste0("http://www.imdb.com/title/", series_imdb_id, "/episodes")
+  base_page = read_html(seasons_url) 
   
   seasons = base_page %>% 
-    html_node("#title-episode-widget") %>% 
-    html_node(".seasons-and-year-nav") %>% 
-    html_nodes("div:nth-child(4)") %>% 
-    html_nodes("a") %>% 
-    html_attr("href")
+    html_node("select#bySeason") %>% 
+    html_nodes("option") %>% 
+    html_attr("value")
   
   # Get episodes for each season
   episodes = tibble()
   for (season in seasons) {
-    season_base_page = paste0("http://www.imdb.com", season) %>% 
+    season_base_page = paste0("https://www.imdb.com/title/tt0096697/episodes?season=", season) %>% 
       read_html()
     
     season_number = season_base_page %>% 
